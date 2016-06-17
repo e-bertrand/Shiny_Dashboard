@@ -3,6 +3,8 @@
 #######################################
 
 library(ggplot2)
+library(shiny)
+library(DT)
 
 # Running the load and tidying of raw files
 source("LoadData.R")
@@ -123,5 +125,9 @@ shinyServer(function(input, output) {
 
     # The height of the graph could be a fix value in px.
     }, height = 575)
+    
+    output$emissions <- DT::renderDataTable(
+        DT::datatable(emissions, options = list(searching = TRUE))
+    )
 
 })

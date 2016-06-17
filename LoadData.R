@@ -28,7 +28,7 @@ categ <- c("1. Vehicles", "2. Fuel comb.", "3. Industry",
 
 source_categ <- c(categ[3], categ[2], categ[2], categ[2], categ[1], categ[3],
                   categ[6], categ[1], categ[3], categ[3], categ[5], categ[3],
-                  categ[6], categ[4], categ[5])
+                  categ[4], categ[4], categ[5])
 
 tier1_categ <- data.frame(tier1, category = source_categ)
 
