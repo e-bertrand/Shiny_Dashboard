@@ -1,6 +1,9 @@
-########################################
+##########################################
 # Server of Air Pollutant shiny dashboard
-#######################################
+# It produces the content of two tabs:
+#    - The dashboard tab
+#    - The dataset tab
+##########################################
 
 library(ggplot2)
 library(shiny)
@@ -13,6 +16,7 @@ source("LoadData.R")
 # the selected options
 shinyServer(function(input, output) {
 
+    # Producing the plots that correspond to the dashboard tab
     output$plot1 <- renderPlot({
         
         # Processing diagram type 3 (pollutions across the states) as it
@@ -110,7 +114,7 @@ shinyServer(function(input, output) {
         
         # Accross the process diferent part of the title has been set
         # Now create the whole graph title
-        Title <- paste("Pollutant emissions", state_title, source_title, com_title)
+        Title <- paste(pollutant,"emissions", state_title, source_title, com_title)
         
         # Ending the plot with the main title and some configurations
         g <- g + ggtitle(Title) +
@@ -126,6 +130,7 @@ shinyServer(function(input, output) {
     # The height of the graph could be a fix value in px.
     }, height = 575)
     
+    # Producing the table for the Dataset tab
     output$emissions <- DT::renderDataTable(
         DT::datatable(emissions, options = list(searching = TRUE))
     )

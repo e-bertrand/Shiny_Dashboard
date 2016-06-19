@@ -1,5 +1,7 @@
 ####################################################
 # Load and tidying up the annual emissions file
+# The result is an emissions dataset ready to be
+# analyzed in the shiny dashboard
 ####################################################
 
 library(tidyr)
@@ -9,11 +11,13 @@ library(readxl)
 
 data(state)
 
-# Add DC to the table of State names/abbr
+# Add DC to the table of State names/abbr. It will be used later
+# for change abbreviations by full names
 state.abb <- c(state.abb, "DC")
 state.name <- c(state.name, "Dist. Columbia")
 
-# Create a table of sources from EPA Tier 1 category
+# Create a simpler table of sources from EPA Tier 1 categories. It will
+# be used later to simplify the number of different sources
 tier1 <- c("CHEMICAL & ALLIED PRODUCT MFG", "FUEL COMB. ELEC. UTIL.",
            "FUEL COMB. INDUSTRIAL", "FUEL COMB. OTHER", 
            "HIGHWAY VEHICLES", "METALS PROCESSING",             
@@ -22,24 +26,22 @@ tier1 <- c("CHEMICAL & ALLIED PRODUCT MFG", "FUEL COMB. ELEC. UTIL.",
            "PRESCRIBED FIRES", "SOLVENT UTILIZATION",          
            "STORAGE & TRANSPORT", "WASTE DISPOSAL & RECYCLING", 
            "WILDFIRES")
-
 categ <- c("1. Vehicles", "2. Fuel comb.", "3. Industry",   
-           "4. Waste proc.", "5. Fires", "6. Others")
-
+           "4. Materials", "5. Fires", "6. Others")
 source_categ <- c(categ[3], categ[2], categ[2], categ[2], categ[1], categ[3],
                   categ[6], categ[1], categ[3], categ[3], categ[5], categ[3],
                   categ[4], categ[4], categ[5])
-
 tier1_categ <- data.frame(tier1, category = source_categ)
 
 # Loading the excel file downloaded from
 # https://www.epa.gov/air-emissions-inventories/air-pollutant-emissions-trends-data
-# There is a concrete sheet and the first row is a comment line
+# Data are in a specific sheet, the first row of which is a comment line
 emissions <- as.data.frame(read_excel("data/annual_emissions_trend.xls",
                                       sheet = "state_trends", skip = 1,
                                       col_names = TRUE))
 
-# Dataset must be fully reorganized as
+# Dataset must be fully reorganized as it is untidy, with abbrevitions and
+# codes instead of full names, with too many type of sources
 emissions <- emissions %>%
                 
                 # Transforming year columns in rows
@@ -62,7 +64,8 @@ emissions <- emissions %>%
                 mutate(state = state.name[match(STATE_ABBR, state.abb)]) %>%
     
                 # Assign source types from tier 1 categories
-                mutate(source = tier1_categ$category[match(tier1_description, tier1_categ$tier1)]) %>%
+                mutate(source = tier1_categ$category[match(tier1_description, 
+                                                           tier1_categ$tier1)]) %>%
                 
                 # Suppresing code columns and grouping and summarizing by basic
                 # criterias

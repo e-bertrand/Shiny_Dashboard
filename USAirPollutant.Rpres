@@ -1,0 +1,168 @@
+<style>
+.small-code pre code {
+  font-size: 16px;
+}
+</style>
+
+<style>
+.reveal ul, 
+.reveal ol {
+    font-size: 28px;
+}
+</style>
+
+<style>
+.parag p {
+    font-size: 28px;
+}
+</style>
+
+```{r, echo=FALSE}
+library(data.table)
+library(knitr)
+library(ggplot2)
+```
+
+A dashboard for US air pollutant emission trends
+================================================
+author: E. Bertrand
+date: 24th June 2016
+
+<small>
+"Developing Data Products" Course Project assignment
+</small>
+
+Why this project?
+========================================================
+class: reveal
+
+- The US Environmental Protection Agency (EPA) publishes a yearly, cumulative file with the emissions of seven key air pollutants (carbon monoxide, ammonia, oxides of nitrogen, etc.), organized by State and Tier 1 source categories (highway vehicles, fuel comb.industrial, wildfires, etc.). 
+
+- In order to analyze and compare basic trends of these pollutants in a visual way, an interactive dashboard has been developed, based on `shiny` technology:
+
+    - It allows you to select dynamically the pollutant, the State, the range of years. Optionally, you can compare two different States.
+
+    - It also allows you to split the data between the different sources for the purpose of understanding the reasons behind a trend.
+
+- The original file has an untidy and complex structure and too much details on source categories (Tier 1 includes 15). As a part of the project, it is included a R script that produces a tidy dataset, with a simpler structure of sources (see next slide).
+
+
+Tidying the original dataset
+============================
+class: small-code
+
+Original dataset
+
+```{r echo=FALSE}
+emissions_raw <- readRDS("./data/emissions_raw.rds")
+str(emissions_raw, vec.len = 2, digits.d = 2, give.attr = FALSE)
+```
+
+***
+
+Tidy dataset
+
+<small>
+After apliying several transformations with `tidyr`, `dyplr`, and `stringr` packages (see last slide for a link to the R code), we get this dataset:
+</small>
+
+```{r echo=FALSE}
+emissions <- readRDS("./data/emissions.rds")
+str(emissions, vec.len = 2, give.attr = FALSE)
+```
+
+
+Dashboard graphs answer key questions
+========================================================
+left: 40%
+class: parag
+
+This plot can be produced by the dashboard. It shows the evolution of PM25 emissions in California since 1996.
+
+Why did it suddenly grow in 2008-2010?
+
+<br/><br/>
+We can see the answer with the second plot the dashboard can create.
+
+After splitting emissions by source, it is clear that the wave of forest fires on those years explains the abrupt increase.
+
+***
+
+```{r, echo=FALSE, fig.height=3.5, dpi=200}
+
+state_list <- "California"
+state_title <- paste("in", state_list)
+emiss_data <- subset(emissions, state %in% state_list)
+source_title <- ""
+pollutant <- "PM25"
+pollutant_data <- emiss_data[[pollutant]]
+
+g <- ggplot(emiss_data, aes(x=year, y=pollutant_data)) +
+                scale_x_continuous(name = "Year",
+                                   breaks = seq(1996,2014,2),
+                                   limits = c(1996, 2014)) +
+                scale_y_continuous(name = paste(pollutant, "(1000 tons)"),
+                                   limits = c(0, NA))
+g <- g + stat_summary(color = "indianred2", fun.y = "sum", size = 1,
+                                  geom = "line", na.rm = TRUE)
+
+Title <- paste(pollutant, "emissions", state_title, source_title)
+
+g <- g + ggtitle(Title) +
+         theme(plot.title = element_text(size = 16, face = "bold",
+                                                 margin = margin(5,0,15,0)),
+               axis.title.x = element_text(size = 14, face = "bold",
+                                                   margin = margin(15,0,5,0)),
+               axis.title.y = element_text(size = 14, face = "bold",
+                                                   margin = margin(0,15,0,0)),
+               legend.text = element_text(size = 12))
+print(g)
+
+```
+
+```{r, echo=FALSE, fig.height=3.5, dpi=200}
+
+Source <- emiss_data$source
+source_title <- "by source"
+
+g <- ggplot(emiss_data, aes(x=year, y=pollutant_data)) +
+                scale_x_continuous(name = "Year",
+                                   breaks = seq(1996,2014,2),
+                                   limits = c(1996, 2014)) +
+                scale_y_continuous(name = paste(pollutant, "(1000 tons)"),
+                                   limits = c(0, NA))
+
+g <- g + stat_summary(aes(color = Source), fun.y = "sum", size = 1,
+                             geom = "line", na.rm = TRUE)
+
+Title <- paste(pollutant, "emissions", state_title, source_title)
+
+g <- g + ggtitle(Title) +
+         theme(plot.title = element_text(size = 16, face = "bold",
+                                                 margin = margin(5,0,15,0)),
+               axis.title.x = element_text(size = 14, face = "bold",
+                                                   margin = margin(15,0,5,0)),
+               axis.title.y = element_text(size = 14, face = "bold",
+                                                   margin = margin(0,15,0,0)),
+               legend.text = element_text(size = 12))
+print(g)
+
+```
+
+References and links [*]
+====================
+<small>
+- The EPA site with the data file and related documents is at <br/> https://www.epa.gov/air-emissions-inventories/air-pollutant-emissions-trends-data
+
+
+- The R code that includes the tidying procedure over the original file is in <br/>
+https://github.com/e-bertrand/Shiny_Dashboard/blob/master/LoadData.R
+
+
+- The shiny application (including related documentation with further details) can be accesed at https://e-bertrand.shinyapps.io/US_Air_Pollutants/
+
+</small>
+
+<small>
+[*] It has been reported that some external links from RPubs do not work properly  (e.g. to github). You can bypass this problem clicking on the link with the right mouse-button, and choosing the "Open the link in a new window" option.
+</small>

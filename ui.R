@@ -1,15 +1,19 @@
-########################################
-# UI of Air Pollutant shiny dashboard
 #######################################
-
-# As widgets are configured dynamically from the emissions dataset
-# it must be also loaded in this sript
+# UI of Air Pollutant shiny dashboard
+# This application produces three tabs
+#  - The dashboard tab (main panel)
+#  - The documentation tab
+#  - The dataset tab
+#######################################
 
 library(shiny)
 library(DT)
 
+# As widgets are configured dynamically from the emissions dataset
+# it must be also loaded in this sript
 source("LoadData.R")
 
+# The basic layout is based on navigation over different tabs (panels)
 shinyUI(navbarPage("US Air Pollutant Emissions",
 
     # Principal panel with the dashboard
@@ -127,24 +131,24 @@ shinyUI(navbarPage("US Air Pollutant Emissions",
                    helpText(
                    "In the raw file, emissions are classified according the",
                    "15 Tier 1 categories defined by the EPA. However, so many", 
-                   "categories makes any splitted diagram uclear and unhelpful."),
+                   "categories make any splitted diagram unclear and unhelpful."),
                    helpText(
                    "In the final dataset all these categories have been grouped",
                    " in 6 different types of sources:", 
-                        strong("1. Vehicles"), ", grouping ",
+                        strong("1. Vehicles, "), "grouping ",
                    "'HIGHWAY VEHICLES' and 'OFF-HIGHWAY'",
-                   ";", strong("2. Fuel comb."), ", grouping",
+                   ";", strong("2. Fuel comb., "), "grouping",
                    "'FUEL COMB. ELEC. UTIL.',",
                    "'FUEL COMB. INDUSTRIAL', and", "'FUEL COMB. OTHER'",
-                   ";", strong("3. Industry"), ", grouping", 
+                   ";", strong("3. Industry, "), "grouping", 
                    "'CHEMICAL & ALLIED PRODUCT MFG',",
                    "'METALS PROCESSING', 'OTHER INDUSTRIAL PROCESSES',",
                    "'PETROLEUM & RELATED INDUSTRIES', and 'SOLVENT UTILIZATION'",
-                   ";", strong("4. Waste proc."), ", groping",
+                   ";", strong("4. Materials,"), "groping",
                    "'WASTE DISPOSAL & RECYCLING' and 'STORAGE & TRANSPORT'",
-                   ";", strong("5. Fires"), ", grouping",
+                   ";", strong("5. Fires,"), "grouping",
                    "'PRESCRIBED FIRES' and 'WILDFIRES'",
-                   ";", strong("6. Others"), ", which correspond to the original",
+                   ";", strong("6. Others,"), "which correspond to the original",
                    "category 'MISCELLANEOUS'."),
                    helpText(
                        ) 
@@ -154,10 +158,9 @@ shinyUI(navbarPage("US Air Pollutant Emissions",
             column(2, helpText(strong("R code:"))),
             column(7, 
                    helpText(
-                   "All R files of this application -properly documented-,",
-                   "including the script for", 
+                   "All R files of this application, including the script for",
                    "transforming the original raw file in the final dataset,",
-                   "are available in a github repository",
+                   "are available -properly documented- in a github repository",
                        a("here.", 
                          href = "https://github.com/e-bertrand/Shiny_Dashboard")    
                    ) 
