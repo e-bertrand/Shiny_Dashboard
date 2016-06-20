@@ -17,26 +17,31 @@
 }
 </style>
 
+<style>
+.table p {
+    font-size: 24px;
+}
+</style>
+
 ```{r, echo=FALSE}
-library(data.table)
 library(knitr)
 library(ggplot2)
 ```
 
-A dashboard for US air pollutant emission trends
+A dashboard for analyzing US air pollutant emissions
 ================================================
 author: E. Bertrand
-date: 24th June 2016
+date: 27th June 2016
 
 <small>
-"Developing Data Products" Course Project assignment
+Project assignment for "Developing Data Products" course
 </small>
 
-Why this project?
+Why this solution?
 ========================================================
 class: reveal
 
-- The US Environmental Protection Agency (EPA) publishes a yearly, cumulative file with the emissions of seven key air pollutants (carbon monoxide, ammonia, oxides of nitrogen, etc.), organized by State and Tier 1 source categories (highway vehicles, fuel comb.industrial, wildfires, etc.). 
+- The US Environmental Protection Agency (EPA) publishes a yearly, cumulative file with the emissions of seven key air pollutants (carbon monoxide, ammonia, oxides of nitrogen, etc.), organized by State and Tier 1 source categories (highway vehicles, fuel comb.industrial, wildfires, etc.).
 
 - In order to analyze and compare basic trends of these pollutants in a visual way, an interactive dashboard has been developed, based on `shiny` technology:
 
@@ -44,35 +49,32 @@ class: reveal
 
     - It also allows you to split the data between the different sources for the purpose of understanding the reasons behind a trend.
 
-- The original file has an untidy and complex structure and too much details on source categories (Tier 1 includes 15). As a part of the project, it is included a R script that produces a tidy dataset, with a simpler structure of sources (see next slide).
+- But before the EPA file can be used in the dashboard, it must be cleaned and reorganized (see next slide).
 
 
-Tidying the original dataset
-============================
-class: small-code
+Cleaning and tidying the original data
+======================================
+class: table
 
-Original dataset
-
+- The original file has an untidy and complex structure: pollutants are in rows and years are in columns; too much details on source categories for a practical use in dashboards (Tier 1 has more than 15 levels); States names are abbreviated, etc. See a partial view of it (2 rows and 9 first colums):
+<small>
 ```{r echo=FALSE}
 emissions_raw <- readRDS("./data/emissions_raw.rds")
-str(emissions_raw, vec.len = 2, digits.d = 2, give.attr = FALSE)
+kable(emissions_raw[c(1,30), c(1:9)], digits = 3, format = "html",
+      row.names = FALSE)
 ```
-
-***
-
-Tidy dataset
-
-<small>
-After apliying several transformations with `tidyr`, `dyplr`, and `stringr` packages (see last slide for a link to the R code), we get this dataset:
 </small>
-
+- As a part of the shiny application, there is a R script -based on `tidyr`, `dplyr` and `stringr` packages- that solves these problems, producing a tidy dataset with a simpler structure of sources.See a partial view of it (2 rows): <br/>
+<small>
 ```{r echo=FALSE}
 emissions <- readRDS("./data/emissions.rds")
-str(emissions, vec.len = 2, give.attr = FALSE)
+kable(emissions[c(1,130), c(1:10)], digits = 4, format = "html",
+      row.names = FALSE)
 ```
+</small>
 
 
-Dashboard graphs answer key questions
+Dashboard value: answering key questions
 ========================================================
 left: 40%
 class: parag
@@ -82,7 +84,7 @@ This plot can be produced by the dashboard. It shows the evolution of PM25 emiss
 Why did it suddenly grow in 2008-2010?
 
 <br/><br/>
-We can see the answer with the second plot the dashboard can create.
+We can see the answer with one of the plots the dashboard can create.
 
 After splitting emissions by source, it is clear that the wave of forest fires on those years explains the abrupt increase.
 
@@ -159,10 +161,9 @@ References and links [*]
 https://github.com/e-bertrand/Shiny_Dashboard/blob/master/LoadData.R
 
 
-- The shiny application (including related documentation with further details) can be accesed at https://e-bertrand.shinyapps.io/US_Air_Pollutants/
+- The shiny dashboard (including related documentation with further details) can be accesed at https://e-bertrand.shinyapps.io/US_Air_Pollutants/
 
 </small>
-
 <small>
 [*] It has been reported that some external links from RPubs do not work properly  (e.g. to github). You can bypass this problem clicking on the link with the right mouse-button, and choosing the "Open the link in a new window" option.
 </small>
