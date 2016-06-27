@@ -9,10 +9,10 @@ library(dplyr)
 library(stringr)
 library(readxl)
 
-data(state)
 
-# Add DC to the table of State names/abbr. It will be used later
-# for change abbreviations by full names
+# Load de R dataset with State names and add DC to the table of 
+# State names/abbr. Used later for change abbreviations by full names
+data(state)
 state.abb <- c(state.abb, "DC")
 state.name <- c(state.name, "Dist. Columbia")
 

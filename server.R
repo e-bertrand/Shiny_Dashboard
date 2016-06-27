@@ -33,9 +33,10 @@ shinyServer(function(input, output) {
                                  fun.y = "sum", geom = "bar", na.rm = TRUE) +
                     scale_y_continuous(name = paste(pollutant, "(1000 tons)")) +
                     scale_x_discrete(name = "State") +
-                    ggtitle(paste("Pollutant across States between", 
+                    ggtitle(paste(pollutant, 
+                                  "across States (total accumulated between", 
                                   min(emiss_data$year), "and",
-                                  max(emiss_data$year))) +
+                                  max(emiss_data$year), ")")) +
                     theme(plot.title = element_text(size = 16, face = "bold",
                                                     margin = margin(5,0,15,0)),
                           axis.title.y = element_text(size = 14, face = "bold",
@@ -50,7 +51,7 @@ shinyServer(function(input, output) {
         # Depending of the selected states a subset of emissions is created
         if (input$state == "All"){
             state_list <- levels(emissions$state)
-            state_title <- "in all states"
+            state_title <- "in all States"
         } else {
             state_list <- input$state
             state_title <- paste("in", input$state)
